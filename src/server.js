@@ -4,9 +4,9 @@ import { MongoClient } from 'mongodb';
 import path from 'path';
 
 const app = express();
+app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, './build')));
-app.use(bodyParser.json());
 
 const withDB = async (operations, res) => {
   try {
@@ -25,7 +25,7 @@ app.get('/api/articles/:name', async (req, res) => {
   withDB(async (db) => {
     const articleName = req.params.name;
   
-    const articleInfo = await db.collection('articles').findOne({name: articleName});
+    const articleInfo = await db.collection('articles').findOne({ name: articleName });
     res.status(200).json(articleInfo); 
   }, res);
 })
@@ -37,12 +37,12 @@ app.post('/api/articles/:name/upvote', async (req, res) => {
     const articleInfo = await db.collection('articles').findOne({ name: articleName});
     await db.collection('articles').updateOne({ name: articleName}, {
       '$set': {
-        upvotes: articleinfo.upvotes + 1, 
+        upvotes: articleInfo.upvotes + 1, 
       },
     });
-    const updateArticleInfo = await db.collection('articles').findOne({ name: articleName}); 
+    const updatedArticleInfo = await db.collection('articles').findOne({ name: articleName}); 
   
-    res.status(200).json(updateArticleInfo);
+    res.status(200).json(updatedArticleInfo);
   }, res);
 });
 
